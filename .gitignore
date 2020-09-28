@@ -1,6 +1,7 @@
 # user defined
 rules/*
 !rules/custom
+test.py
 
 # Byte-compiled / optimized / DLL files
 .idea/
