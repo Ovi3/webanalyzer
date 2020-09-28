@@ -20,15 +20,18 @@ def update(repository: str, path: str) -> bool:
             version = fd.read().strip()
 
         if version:
-            rp = requests.get("https://raw.githubusercontent.com/%s/master/VERSION" % repository)
+            rp = requests.get("https://raw.githubusercontent.com/%s/master/VERSION" % repository, timeout=12)
             if version == rp.text.strip():
                 logger.warning("already at the latest revision '%s'" % version)
                 return True
 
-    if not os.system("git version"):
-        return _update_rules_from_git(repository, path)
-    else:
-        return _update_rule_from_file(repository, path)
+    # if not os.system("git version"):
+    #     return _update_rules_from_git(repository, path)
+    # else:
+    #     logger.warning("Can not found git command, Use http request to download rules repository.")
+    #     return _update_rule_from_file(repository, path)
+
+    return _update_rule_from_file(repository, path)
 
 
 def _update_rules_from_git(repository: str, path: str) -> bool:
@@ -47,9 +50,6 @@ def _update_rules_from_git(repository: str, path: str) -> bool:
 
 
 def _update_rule_from_file(repository: str, path: str) -> bool:
-    logger.warning(("not a git repository. It is recommended to clone the 'webanalyzer/rules' repository "
-                    "from GitHub (e.g. 'git clone --depth 1 https://github.com/%s.git')" % repository))
-
     def reporthook(a, b, c):
         if a % 10 == 0:
             logger.warning('download size %d KB', (b * a) / 1024)
@@ -66,7 +66,7 @@ def _update_rule_from_file(repository: str, path: str) -> bool:
         with zipfile.ZipFile(zip_file) as fd:
             for info in fd.infolist():
                 info.filename = info.filename.replace('rules-master/', '')
-                if info.filename:
+                if info.filename and not info.filename.startswith('custom/'):
                     fd.extract(info, path)
     except Exception as e:
         logger.error("unzip zip file error", exc_info=e)

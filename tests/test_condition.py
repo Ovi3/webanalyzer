@@ -1,7 +1,7 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from webanalyzer import Condition
-from webanalyzer.condition import ParseException
+from core import Condition, ParseException
 
 
 def test_simple():

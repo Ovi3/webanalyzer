@@ -13,7 +13,6 @@ import urllib.request
 from bs4 import BeautifulSoup
 from .utils import update
 from .condition import Condition
-from . import __version__
 
 __all__ = ["WebAnalyzer"]
 
@@ -33,7 +32,7 @@ class WebAnalyzer(object):
         self.timeout = 30
         self.allow_redirect = True
         self.headers = {
-            'user-agent': 'webanalyzer/%s' % __version__
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.2 Safari/605.1.15'
         }
         self.rule_dir = DEFAULT_RULE_DIR
 
@@ -60,7 +59,7 @@ class WebAnalyzer(object):
                 if not i.endswith('.json'):
                     continue
 
-                with open(os.path.join(rule_type_dir, i)) as fd:
+                with open(os.path.join(rule_type_dir, i), encoding="utf-8") as fd:
                     try:
                         data = json.load(fd)
                         for match in data['matches']:

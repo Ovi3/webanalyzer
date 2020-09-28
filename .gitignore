@@ -1,3 +1,7 @@
+# user defined
+rules/*
+!rules/custom
+
 # Byte-compiled / optimized / DLL files
 .idea/
 __pycache__/
@@ -11,6 +15,7 @@ site/
 
 # Distribution / packaging
 .Python
+.env
 env/
 venv/
 build/

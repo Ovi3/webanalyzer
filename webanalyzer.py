@@ -1,16 +1,15 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""Console script for webanalyzer."""
 
 import os
 import json
 import click
 import logging
-from core.webanalyzer import WebAnalyzer
-from core import __version__
+from core import WebAnalyzer
 
 
-@click.command()
+@click.command(context_settings=dict(help_option_names=["-h", "--help"]))
 @click.option('-u', '--url', type=click.STRING, help='Target')
 @click.option('-d', '--directory', default=os.path.join(os.getcwd(), "rules"), help="Rules directory, default ./rules")
 @click.option('-a', '--aggression', type=click.IntRange(0, 2), default=0, help='Aggression mode, default 0')
@@ -21,7 +20,6 @@ from core import __version__
 @click.option('--disallow-redirect', is_flag=True, default=False, help='Disallow redirect')
 @click.option('--list-rules', is_flag=True, default=False, help='List rules')
 @click.option('--update', is_flag=True, default=False, help="Update rules")
-@click.version_option(__version__)
 def main(url, update, directory, aggression, user_agent, header, disallow_redirect, list_rules, verbose, rule):
     w = WebAnalyzer()
     w.rule_dir = directory
@@ -32,17 +30,18 @@ def main(url, update, directory, aggression, user_agent, header, disallow_redire
         return
 
     if list_rules:
-        if not os.path.isdir(directory) or not os.path.isfile(os.path.join(directory, 'VERSION')):
-            click.echo("invalid rules directory, use -d to specify rule directory")
+        if not os.path.isdir(directory):
+            click.echo("rules directory is not exist, use -d to specify rule directory")
             return
 
-        w.reload_rules()
+        rules_count = w.reload_rules()
         for i in w.list_rules().values():
             if i.get('desc'):
                 click.echo('%s - %s - %s' % (i['name'], i['origin'], i['desc']))
             else:
                 click.echo('%s - %s' % (i['name'], i['origin']))
 
+        click.echo("\n%d rules totally" % rules_count)
         return
 
     if not url:
@@ -74,8 +73,8 @@ def main(url, update, directory, aggression, user_agent, header, disallow_redire
             click.echo(json.dumps(r, indent=4))
         return
 
-    if not os.path.isdir(directory) or not os.path.isfile(os.path.join(directory, 'VERSION')):
-        click.echo("invalid rules directory, use -d to specify rule directory")
+    if not os.path.isdir(directory):
+        click.echo("rules directory is not exist, use -d to specify rule directory")
         return
 
     r = w.start(url)
