@@ -239,7 +239,7 @@ class WebAnalyzer(object):
                     if not result:
                         continue
 
-                    if 'version' in result.groupdict():
+                    if 'version' in result.groupdict() and result.group('version'):
                         version = result.group('version')
                     elif 'offset' in match:
                         if len(result.groups()) > match['offset']:
