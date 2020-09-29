@@ -1,0 +1,20 @@
+{
+    "name": "sample",
+    "author": "Ovi3",
+    "description": "这是一个随意的示例",
+    "website": "https://github.com/Ovi3",
+    "matches": [
+        {
+            "status": "200",
+            "search": "body",
+            "regexp": "webanalyzer[ ]*\""
+        },
+        {
+            "text": "Ovi3"
+        },
+        {
+            "md5": "e10adc3949ba59abbe56e057f20f883e"
+        }
+    ],
+    "condition": "0 and (1 and not 2)",
+}

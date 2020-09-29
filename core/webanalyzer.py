@@ -61,6 +61,9 @@ class WebAnalyzer(object):
                 path = os.path.join(root, file)
                 if not path.endswith('.json'):
                     continue
+                if path.replace("\\", "/").endswith("custom/sample.json"):
+                    # 跳过示例规则文件
+                    continue
 
                 if root[len(self.rule_dir):].replace("\\", "/").strip("/"):
                     rule_type = root[len(self.rule_dir):].replace("\\", "/").strip("/").split("/")[0]
