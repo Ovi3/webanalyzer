@@ -45,13 +45,13 @@ Options:
   --update                        Update rules
   -h, --help                      Show this message and exit.
 ```
-- verbose参数指定日志level。verbose越高，输出越详细，默认为2。各值对应的level：
+- verbose选项指定日志level。verbose越高，输出越详细，默认为2。各值对应的level：
   - 0 - CRITICAL
   - 1 - ERROR
   - 2 - WARNING
   - 3 - INFO
   - 4 - DEBUG
-- aggression参数：
+- aggression选项：
   - 值为0时，只发送两个请求：用户指定url，和/favicon.ico。
   - 值为1时，还会主动请求custom规则里包含的url，并进行规则匹配
   - 值为2时，主动请求所有规则里包含的url，并进行规则匹配
@@ -198,18 +198,23 @@ matches字段为数组，存储一个个规则
 
 | FIELD      | TYPE   | DESCRIPTION                                                             | EXAMPLE                            |
 |------------|--------|-------------------------------------------------------------------------|------------------------------------|
-| name       | string | 规则名称                                                                | `rulename`                         |
-| search     | string | 搜索的位置，可选值为 `all`, `headers`, `title`, `body`, `script`, `cookies`, `headers[key]`, `meta[key]`, `cookies[key]`| `body`                              |
+| name       | string | 规则名称，可不写                                                         | `rulename`                         |
+| search     | string | 搜索的位置，可选值为 `all`, `headers`, `title`, `body`, `script`, `cookies`, `headers[key]`, `meta[key]`, `cookies[key]`。默认为`body`| `body`                              |
 | regexp     | string | 正则表达式                                                              | `wordpress.*`                      |
 | text       | string | 明文搜索                                                                | `wordpress`                        |
 | version    | string | 匹配的版本号                                                            | `0.1`                              |
 | offset     | int    | regexp 中版本搜索的偏移（从0开始）                                       | `1`                                |
-| certainty  | int    | 确信度                                                                  | `75`                               |
+| certainty  | int    | 确信度，可不写，默认为`100`                                                                  | `75`                               |
 | md5        | string | 目标文件的 md5 hash 值                                                  | `beb816a701a4cee3c2f586171458ceec` |
 | url        | string | 需要请求的 url                                                          | `/properties/aboutprinter.html`    |
 | status     | int    | 请求 url 的返回状态码，默认是 200                                       | `400`                              |
 
-
+用户编写自己的规则时，按如下步骤思考：
+1. 是否需要请求特定url，若需要编写url字段
+2. 用什么检测方式：md5、status、regexp或text。若为regexp或text， 需编写search字段表明搜索位置
+3. 当规则可行度不为100时，编写certainty字段
+4. 当编写多个match后，考虑condition字段的设置
+5. 再处理其它字段
 
 ## 检测逻辑
 

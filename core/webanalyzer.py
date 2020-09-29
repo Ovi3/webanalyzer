@@ -79,7 +79,7 @@ class WebAnalyzer(object):
                                 match['certainty'] = 100
 
                         data['origin'] = rule_type
-                        if any([match.get("url", "").replace("/favicon.ico", "") for match in data['matches']]):
+                        if any([m.get("url", "").replace("/favicon.ico", "") for m in data['matches']]):
                             # 只要matches中有一项match，存在url一项且不等于/favicon.ico，就是aggression，需要发送额外请求的
                             data['aggressive'] = True
                         else:
