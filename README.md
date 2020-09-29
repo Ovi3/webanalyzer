@@ -1,5 +1,5 @@
 # webanalyzer
-Web指纹识别工具，使用Python3.6以上版本运行。基于https://github.com/webanalyzer/webanalyzer.py修改，主要修改以下几点：
+Web指纹识别工具，使用Python3.6以上版本运行。基于 https://github.com/webanalyzer/webanalyzer.py 修改，主要修改以下几点：
 
 - 添加支持代理、多线程
 - 输出结果包含匹配详情。即什么正则匹配了响应body，或md5匹配了body等
@@ -16,7 +16,7 @@ python3 webanalyzer.py -h
 
 ## 使用
 
-第一次运行程序可从https://github.com/webanalyzer/rules下载指纹规则到项目根目录的./rules目录下：
+第一次运行程序可从 https://github.com/webanalyzer/rules 下载指纹规则到项目根目录的./rules目录下：
 ``` sh
 python3 webanalyzer.py --update
 ```
@@ -136,7 +136,7 @@ python webanalyzer.py -u "http://blog.fatezero.org" -r ./rules/wappalyzer/hexo.j
 输出结果说明
 - name：组件名
 - version：版本号
-- detail：匹配详情。匹配详情不考虑condition字段，只输出最后一个匹配到的规则，即matches数组里最后一个匹配的（见下方“规则编写”）
+- detail：匹配详情。匹配详情不考虑condition字段，只输出最后一个匹配到的规则，即matches字段里最后一个匹配的（字段说明见下方“规则编写”）
 - origin：规则来源
 
 
@@ -180,7 +180,7 @@ python webanalyzer.py -u "http://blog.fatezero.org" -r ./rules/wappalyzer/hexo.j
 
 
 ### 规则信息
-matches数组里存储规则信息
+matches字段为数组，存储一个个规则
 
 例子:
 
