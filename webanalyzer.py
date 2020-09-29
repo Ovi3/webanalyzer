@@ -37,21 +37,17 @@ def main(url, update, directory, aggression, user_agent, header, proxy, max_thre
             return
 
         rules_count = w.reload_rules()
-        passive_count = 0
         aggression_count = 0
         for i in w.list_rules().values():
-            if any([match.get("url", "").replace("/favicon.ico", "") for match in i['matches']]):
-                # 只要matches中有一项match，存在url一项且不等于/favicon.ico，就是aggression，需要发送额外请求的
+            if i.get('aggressive'):
                 aggression_count += 1
-            else:
-                passive_count += 1
 
             if i.get('desc'):
                 click.echo('%s - %s - %s' % (i['name'], i['origin'], i['desc']))
             else:
                 click.echo('%s - %s' % (i['name'], i['origin']))
 
-        click.echo("\n%d rules totally(passive: %d, aggressive: %d)" % (rules_count, passive_count, aggression_count))
+        click.echo("\n%d rules totally(passive: %d, aggressive: %d)" % (rules_count, (rules_count - aggression_count), aggression_count))
         return
 
     if not url:

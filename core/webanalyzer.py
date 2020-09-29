@@ -12,7 +12,7 @@ import logging
 import requests
 import urllib.parse
 import urllib.request
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, Future
 from bs4 import BeautifulSoup
 from .utils import update
 from .condition import Condition
@@ -79,6 +79,12 @@ class WebAnalyzer(object):
                                 match['certainty'] = 100
 
                         data['origin'] = rule_type
+                        if any([match.get("url", "").replace("/favicon.ico", "") for match in data['matches']]):
+                            # 只要matches中有一项match，存在url一项且不等于/favicon.ico，就是aggression，需要发送额外请求的
+                            data['aggressive'] = True
+                        else:
+                            data['aggressive'] = False
+
                         key = '%s_%s' % (rule_type, data['name'])  # 用于去重
                         new_rules[key] = data
                     except Exception as e:
@@ -333,15 +339,19 @@ class WebAnalyzer(object):
             if reload:
                 self.reload_rules()
 
-            def callback(future):
-                future_list.remove(future)
+            def handle_result(future):
+                if isinstance(future, Future):
+                    future_list.remove(future)
 
-                e = future.exception()
-                if e:
-                    logger.error("check rule error: %s" % e)
-                    return
+                    e = future.exception()
+                    if e:
+                        logger.error("check rule error: %s" % e)
+                        return
 
-                r = future.result()
+                    r = future.result()
+                else:
+                    r = future
+
                 if r:
                     if 'implies' in rule:
                         if isinstance(rule['implies'], str):
@@ -360,11 +370,18 @@ class WebAnalyzer(object):
                     results.append(r)
 
             for name, rule in RULES.items():
-                future = pool.submit(self._check_rule, rule)
-                future_list.append(future)
-                future.add_done_callback(callback)
-                if len(future_list) > self.max_threads + 32:
-                    time.sleep(0.2)
+                if rule['aggressive'] is False:
+                    r = self._check_rule(rule)
+                    handle_result(r)
+
+            if self.aggression > 0:
+                for name, rule in RULES.items():
+                    if rule['aggressive'] is True:
+                        future = pool.submit(self._check_rule, rule)
+                        future_list.append(future)
+                        future.add_done_callback(handle_result)
+                        if len(future_list) > self.max_threads + 32:
+                            time.sleep(0.2)
             pool.shutdown(wait=True)
 
         except KeyboardInterrupt:
