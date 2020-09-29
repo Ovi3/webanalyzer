@@ -212,7 +212,7 @@ matches字段为数组，存储一个个规则
 用户编写自己的规则时，按如下步骤思考：
 1. 是否需要请求特定url，若需要编写url字段
 2. 用什么检测方式：md5、status、regexp或text。若为regexp或text， 需编写search字段表明搜索位置
-3. 当规则可行度不为100时，编写certainty字段
+3. 当规则确信度不为100时，编写certainty字段
 4. 当编写多个match后，考虑condition字段的设置
 5. 再处理其它字段
 
